@@ -1,5 +1,5 @@
 # To run
-*This compiler is built solely for macbook* <br/>
+*This compiler is built solely for macOS* <br/>
 Make sure you have sdl2 installed; `brew install sdl2` <br/>
 In the `c_cpp_properties.json` file, add the path to the sdl2 to the includePath; `brew --prefix sdl2` <br/>
 Only add up to `include`, since the import is `SDL2/SDL.h` <br/>
