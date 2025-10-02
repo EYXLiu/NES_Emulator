@@ -11,14 +11,20 @@
 
 class Bus
 {
+private:
+    uint32_t nSystemClockCounter = 0;
+    
+    uint8_t controller_state[2];
+
 public:
     olc6502 cpu;
     olc2C02 ppu;
     std::array<uint8_t, 2048> cpuRam;
 
-    uint32_t nSystemClockCounter = 0;
 
     std::shared_ptr<Cartridge> cart;
+
+    uint8_t controller[2];
 
 public:
     Bus();
