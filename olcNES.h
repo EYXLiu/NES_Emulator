@@ -6,6 +6,8 @@
 #include <map>
 #include <string>
 
+std::string cartridge = "smb2.nes";
+
 class NES : public olc::PixelGameEngine
 {
 public:
@@ -108,7 +110,7 @@ private:
 public:
     bool OnUserCreate() override
     {
-        cart = std::make_shared<Cartridge>("smb2.nes");
+        cart = std::make_shared<Cartridge>(cartridge);
         nes.insertCartridge(cart);
         mapAsm = nes.cpu.disassemble(0x0000,0xFFFF);
         nes.reset();
