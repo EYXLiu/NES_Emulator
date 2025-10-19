@@ -27,3 +27,6 @@ https://www.nesdev.org/w/index.php/NROM
 # Nes test roms
 https://www.qmtpro.com/~nes/misc/nestest.txt <br/>
 https://github.com/christopherpow/nes-test-roms/tree/master/other
+
+# Credits
+https://youtube.com/playlist?list=PLrOv9FMX8xJHqMvSGB_9G9nZZ_4IgteYf&si=J-i5mwQwBl6FgCou <br/>
