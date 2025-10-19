@@ -12,7 +12,7 @@ Run the executable using the name provided <br/>
 Includes mappers 000, 001, 002, 003, 004, 066 from https://www.nesdev.org/wiki/Mapper <br/>
 
 # Issues
-Audio does not currently work, likely to do with SDL2 <br/>
+Audio does not currently work, likely to do with SDL2 -> also does not use audio because ow my ears <br/>
 To test and fix audio, SDL2_Audio code is found in `olcPGEX.h` <br/>
 In `olcNES.h`, change the `OnUserUpdate` function to emulate with audio and test then. <br/>
 
