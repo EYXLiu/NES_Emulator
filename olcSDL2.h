@@ -254,6 +254,8 @@ namespace olc
         }
     };
 
+    class PGEX;
+
     class PixelGameEngine
     {
     protected:
@@ -437,6 +439,13 @@ namespace olc
         }
 
         virtual bool OnUserCreate() { return true; }
+        virtual bool OnUserDestroy() { return true; }
         virtual bool OnUserUpdate(float fElapsedTime) { return true; }
+
+        friend class PGEX;
+        void PGEX_Register(olc::PGEX* pgex);
+
+    private:
+        std::vector<olc::PGEX*> vExtensions;
     };
 }

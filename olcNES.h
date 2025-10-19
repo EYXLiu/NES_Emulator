@@ -1,4 +1,7 @@
+#pragma once
+
 #include "olcSDL2.h"
+#include "olcPGEX.h"
 #include "Bus.h"
 #include "font8x8_basic.h"
 
@@ -108,16 +111,95 @@ private:
 	}
 
 public:
+
     bool OnUserCreate() override
     {
         cart = std::make_shared<Cartridge>(cartridge);
         nes.insertCartridge(cart);
         mapAsm = nes.cpu.disassemble(0x0000,0xFFFF);
+
+		//pInstance = this;
+		//nes.SetSampleFrequency(44100);
+		//olc::SOUND::InitialiseAudio(44100, 1, 512);
+		//olc::SOUND::SetUserSynthFunction(SoundOut);
+
         nes.reset();
         return true;
     }
 
-    bool OnUserUpdate(float fElapsedTime) override
+	inline static NES* pInstance = nullptr;
+
+	static float SoundOut(int nChannel, float fGlobalTime, float fTimeStep)
+	{
+		while (!pInstance->nes.clock()) {};
+		return static_cast<float>(pInstance->nes.dAudioSample);
+	}
+
+	bool OnUserDestroy() override
+	{
+		//olc::SOUND::DestroyAudio();
+		return true;
+	}
+
+	bool OnUserUpdate(float fElapsedTime) override
+	{
+		EmulatorUpdateWithoutAudio(fElapsedTime);
+		return true;
+	}
+
+	bool EmulatorUpdateWithAudio(float fElapsedTime)
+	{
+		Clear(olc::DARK_BLUE);
+
+		nes.controller[0] = 0x00;
+		nes.controller[0] |= GetKey(olc::Key::A).bHeld ? 0x80 : 0x00;
+		nes.controller[0] |= GetKey(olc::Key::S).bHeld ? 0x40 : 0x00;
+		nes.controller[0] |= GetKey(olc::Key::X).bHeld ? 0x20 : 0x00;
+		nes.controller[0] |= GetKey(olc::Key::Z).bHeld ? 0x10 : 0x00;
+		nes.controller[0] |= GetKey(olc::Key::UP).bHeld ? 0x08 : 0x00;
+		nes.controller[0] |= GetKey(olc::Key::DOWN).bHeld ? 0x04 : 0x00;
+		nes.controller[0] |= GetKey(olc::Key::LEFT).bHeld ? 0x02 : 0x00;
+		nes.controller[0] |= GetKey(olc::Key::RIGHT).bHeld ? 0x01 : 0x00;
+
+        DrawCpu(516, 2);
+		//DrawCode(516, 72, 26);
+
+		for (int i = 0; i < 26; i++)
+		{
+			std::string s = hex(i, 2) + ": (" + std::to_string(nes.ppu.pOAM[i * 4 + 3]) 
+				+ ", " + std::to_string(nes.ppu.pOAM[i * 4 + 0]) + ") "
+				+ "ID: " + hex(nes.ppu.pOAM[i * 4 + 1], 2)
+				+ " AT: " + hex(nes.ppu.pOAM[i * 4 + 2], 2);
+			DrawString(516, 72 + i * 10, s);
+		}
+
+		const int nSwatchSize = 6;
+		for (int p = 0; p < 8; p++) // For each palette
+			for(int s = 0; s < 4; s++) // For each index
+				FillRect(516 + p * (nSwatchSize * 5) + s * nSwatchSize, 340, 
+					nSwatchSize, nSwatchSize, nes.ppu.GetColourFromPaletteRam(p, s));
+		
+		// Draw selection reticule around selected palette
+		DrawRect(516 + nSelectedPalette * (nSwatchSize * 5) - 1, 339, (nSwatchSize * 4), nSwatchSize, olc::WHITE);
+
+
+		DrawSprite(516, 348, &nes.ppu.GetPatternTable(0, nSelectedPalette));
+		DrawSprite(648, 348, &nes.ppu.GetPatternTable(1, nSelectedPalette));
+
+		DrawSprite(0, 0, &nes.ppu.GetScreen(), 2);
+
+		// olc::Sprite& s = nes.ppu.GetPatternTable(0, nSelectedPalette);
+		// for (uint8_t y = 0; y < 30; y++)
+		// 	for (uint8_t x = 0; x < 32; x++)
+		// 	{
+		// 		//DrawString(x * 16, y * 16, hex((uint32_t)nes.ppu.tblName[0][y * 32 + x], 2));
+		// 		uint8_t id = (uint32_t)nes.ppu.tblName[0][y * 32 + x];
+		// 		DrawPartialSprite(x * 16, y * 16, &s, (id & 0x0F) << 3, ((id >> 4) & 0x0F) << 3, 8, 8, 2);
+		// 	}
+		return true;
+	}
+
+    bool EmulatorUpdateWithoutAudio(float fElapsedTime)
     {
         Clear(olc::DARK_BLUE);
 

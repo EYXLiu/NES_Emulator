@@ -1,4 +1,4 @@
-#include "../Mapper_000.h"
+#include "../../Mapper_000.h"
 
 Mapper_000::Mapper_000(uint8_t prgBanks, uint8_t chrBanks) : Mapper(prgBanks, chrBanks)
 {
@@ -12,7 +12,7 @@ void Mapper_000::reset()
 {
 }
 
-bool Mapper_000::cpuMapRead(uint16_t addr, uint32_t &mapped_addr)
+bool Mapper_000::cpuMapRead(uint16_t addr, uint32_t &mapped_addr, uint8_t &data)
 {
     if (addr >= 0x8000 && addr <= 0xFFFF)
     {

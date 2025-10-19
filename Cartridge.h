@@ -5,6 +5,11 @@
 #include <fstream>
 
 #include "Mapper_000.h"
+#include "Mapper_001.h"
+#include "Mapper_002.h"
+#include "Mapper_003.h"
+#include "Mapper_004.h"
+#include "Mapper_066.h"
 
 class Cartridge
 {
@@ -19,17 +24,11 @@ private:
     std::shared_ptr<Mapper> pMapper;
     bool bImageValid = false;
 
+    MIRROR hw_mirror = HORIZONTAL;
+
 public:
     Cartridge(const std::string& sFileName);
     ~Cartridge();
-
-    enum MIRROR
-    {
-        HORIZONTAL,
-        VERTICAL,
-        ONESCREEN_LO,
-        ONECREEN_HI
-    } mirror = HORIZONTAL;
 
     bool cpuRead(uint16_t addr, uint8_t &data);
     bool cpuWrite(uint16_t addr, uint8_t data);
@@ -39,4 +38,8 @@ public:
 
     void reset();
     bool ImageValid();
+
+    MIRROR Mirror();
+
+	std::shared_ptr<Mapper> GetMapper();
 };

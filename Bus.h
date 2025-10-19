@@ -1,6 +1,7 @@
 #pragma once
 #include "olc6502.h"
 #include "olc2C02.h"
+#include "olc2A03.h"
 #include "Cartridge.h"
 #include <cstdint>
 #include <array>
@@ -23,15 +24,25 @@ private:
     bool dma_transfer = false;
     bool dma_dummy = true;
 
+    double dAudioTimePerSystemSample = 0.0f;
+    double dAudioTimePerNESClock = 0.0f;
+
+    double dAudioTime = 0.0f;
+
 public:
     olc6502 cpu;
     olc2C02 ppu;
+    olc2A03 apu;
+
     std::array<uint8_t, 2048> cpuRam;
 
 
     std::shared_ptr<Cartridge> cart;
 
     uint8_t controller[2];
+
+    double dAudioSample = 0.0;
+    void SetSampleFrequency(uint32_t sample_rate);
 
 public:
     Bus();
@@ -47,5 +58,5 @@ public:
     //system interface
     void insertCartridge(const std::shared_ptr<Cartridge>& cartridge);
     void reset();
-    void clock();
+    bool clock();
 };

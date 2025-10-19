@@ -251,7 +251,7 @@ uint8_t olc2C02::ppuRead(uint16_t addr, bool bReadOnly)
     {
 		addr &= 0x0FFF;
 
-        if (cart->mirror == Cartridge::MIRROR::VERTICAL)
+        if (cart->Mirror() == MIRROR::VERTICAL)
 		{
 			if (addr >= 0x0000 && addr <= 0x03FF)
 				data = tblName[0][addr & 0x03FF];
@@ -262,7 +262,7 @@ uint8_t olc2C02::ppuRead(uint16_t addr, bool bReadOnly)
 			if (addr >= 0x0C00 && addr <= 0x0FFF)
 				data = tblName[1][addr & 0x03FF];
 		}
-		else if (cart->mirror == Cartridge::MIRROR::HORIZONTAL)
+		else if (cart->Mirror() == MIRROR::HORIZONTAL)
 		{
 			if (addr >= 0x0000 && addr <= 0x03FF)
 				data = tblName[0][addr & 0x03FF];
@@ -301,7 +301,7 @@ void olc2C02::ppuWrite(uint16_t addr, uint8_t data)
     {
         addr &= 0x0FFF;
         
-		if (cart->mirror == Cartridge::MIRROR::VERTICAL)
+		if (cart->Mirror() == MIRROR::VERTICAL)
 		{
 			if (addr >= 0x0000 && addr <= 0x03FF)
 				tblName[0][addr & 0x03FF] = data;
@@ -312,7 +312,7 @@ void olc2C02::ppuWrite(uint16_t addr, uint8_t data)
 			if (addr >= 0x0C00 && addr <= 0x0FFF)
 				tblName[1][addr & 0x03FF] = data;
 		}
-		else if (cart->mirror == Cartridge::MIRROR::HORIZONTAL)
+		else if (cart->Mirror() == MIRROR::HORIZONTAL)
 		{
 			if (addr >= 0x0000 && addr <= 0x03FF)
 				tblName[0][addr & 0x03FF] = data;
@@ -733,6 +733,14 @@ void olc2C02::clock()
     sprScreen->SetPixel(cycle - 1, scanline, GetColourFromPaletteRam(palette, pixel));
 
 	cycle++;
+    if (mask.render_background || mask.render_sprites)
+    {
+        if (cycle == 260 && scanline < 240)
+        {
+            cart->GetMapper()->scanline();
+        }
+    }
+    
 	if (cycle >= 341)
 	{
 		cycle = 0;
